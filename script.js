@@ -1,6 +1,8 @@
 const words = await getWords()
+const wordCountByFirstLetter = countWordsByFirstLetter()
+const wordCountByLetter = countWordsByLetter()
 
-console.log(words)
+console.log({words, wordCountByFirstLetter, wordCountByLetter})
 
 async function getWords() {
     const response = await fetch('words.txt')
@@ -20,4 +22,32 @@ async function getWords() {
     }
 
     return words
+}
+
+function countWordsByFirstLetter() {
+    const count = {}
+
+    for (const {word} of words) {
+        const letter = word[0]
+
+        if (!count[letter]) count[letter] = 0
+
+        count[letter]++
+    }
+
+    return count
+}
+
+function countWordsByLetter() {
+    const count = {}
+
+    for (const {word} of words) {
+        for (const letter of new Set(word)) {
+            if (!count[letter]) count[letter] = 0
+
+            count[letter]++
+        }
+    }
+
+    return count
 }
