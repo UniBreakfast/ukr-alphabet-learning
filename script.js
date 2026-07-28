@@ -1,8 +1,9 @@
 const words = await getWords()
 const wordCountByFirstLetter = countWordsByFirstLetter()
 const wordCountByLetter = countWordsByLetter()
+const wordCountByRepeatingLetter = countWordsByRepeatingLetter()
 
-console.log({words, wordCountByFirstLetter, wordCountByLetter})
+console.log({words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter})
 
 async function getWords() {
     const response = await fetch('words.txt')
@@ -49,5 +50,23 @@ function countWordsByLetter() {
         }
     }
 
+    return count
+}
+
+function countWordsByRepeatingLetter() {
+    const count = {}
+
+    for (const {word} of words) {
+        for (const letter of word) {
+            const regex = new RegExp(letter, 'g')
+            const mathes = word.match(regex)    
+            
+            if (!count[letter]) count[letter] = 0
+
+            if (mathes && mathes.length > 1) count[letter]++
+        }
+        
+    }
+    
     return count
 }
