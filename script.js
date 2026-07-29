@@ -88,7 +88,7 @@ function getKeysBelowCount(obj, count) {
     for (const key in obj) {
         if (obj[key] < count) keys.push(key)
     }
-    
+
     return keys
 }
 
@@ -96,8 +96,8 @@ function getKeysByAscendingCount(obj) {
     const keys = Object.keys(obj)
 
     keys.sort((a, b) => obj[a] - obj[b])
-    
-    return keys    
+
+    return keys
 }
 
 function groupWordsByFirstLetter() {
@@ -115,7 +115,24 @@ function groupWordsByFirstLetter() {
 }
 
 function groupWordsByRepeatingLetter() {
+    const groups = {}
 
+    for (const { word } of words) {
+        let letters = ''
+        
+        for (const letter of word) {
+            if (letters.includes(letter)) {
+                if (!groups[letter]) groups[letter] = []
+
+                groups[letter].push(word)
+
+            } else {
+                letters += letter
+            }
+        }
+    }
+
+    return groups
 }
 
 function groupWordsByLetter() {
@@ -132,6 +149,6 @@ function getWordGroups(count) {
         // const wordsRepeating = getWordsRepeating(count, letter)
 
     }
-    
+
     return groups
 }
