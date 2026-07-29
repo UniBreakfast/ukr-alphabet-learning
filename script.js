@@ -1,5 +1,3 @@
-const { use } = require("react")
-
 const words = await getWords()
 const wordCountByFirstLetter = countWordsByFirstLetter()
 const wordCountByLetter = countWordsByLetter()
@@ -11,11 +9,11 @@ const wordGroupByRepeatingLetter = groupWordsByRepeatingLetter()
 
 const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
-// getWordGroups(11)
+const wordGroups = getWordGroups(10)
 
 console.log(wordGroupByFirstLetter, wordGroupByLetter, wordGroupByRepeatingLetter)
 
-console.log({ words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter, keysBelowCount })
+console.log({ words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter, keysBelowCount, wordGroups })
 
 async function getWords() {
     const response = await fetch('words.txt')
@@ -168,21 +166,21 @@ function getRandomItems(arg, count, usedItems=[]) {
 }
 
 function getWordsStarting(count, letter, usedWords) {
-    const group = wordGroupByFirstLetter[letter]
+    const group = wordGroupByFirstLetter[letter] || []
     const words = getRandomItems(group, count, usedWords)
 
     return words
 }
 
 function getWordsRepeating(count, letter, usedWords) {
-    const group = wordCountByRepeatingLetter[letter]
+    const group = wordGroupByRepeatingLetter[letter] || []
     const words = getRandomItems(group, count, usedWords)
 
     return words
 }
 
 function getWordsContaining(count, letter, usedWords) {
-    const group = wordGroupByLetter[letter]
+    const group = wordGroupByLetter[letter] || []
     const words = getRandomItems(group, count, usedWords)
     
     return words
