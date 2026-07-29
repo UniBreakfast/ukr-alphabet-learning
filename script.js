@@ -4,6 +4,8 @@ const wordCountByLetter = countWordsByLetter()
 const wordCountByRepeatingLetter = countWordsByRepeatingLetter()
 const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
+getWordGroups(11)
+
 console.log({ words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter, keysBelowCount })
 
 async function getWords() {
@@ -81,4 +83,26 @@ function getKeysBelowCount(obj, count) {
     }
     
     return keys
+}
+
+function getKeysByAscendingCount(obj) {
+    const keys = Object.keys(obj)
+
+    keys.sort((a, b) => obj[a] - obj[b])
+    
+    return keys    
+}
+
+function getWordGroups(count) {
+    const groups = {}
+
+    const orderedLetters = getKeysByAscendingCount(wordCountByLetter)
+
+    console.log(orderedLetters)    
+
+    for (const letter of orderedLetters) {
+        
+    }
+    
+    return groups
 }
