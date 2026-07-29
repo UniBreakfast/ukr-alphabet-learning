@@ -149,30 +149,33 @@ function groupWordsByLetter() {
     return groups
 }
 
-function getRandomItems(arg, count) {
+function getRandomItems(arg, count, usedItems=[]) {
     const arr = [...arg]
     const items = []
 
     while (items.length < count && arr.length) {
-        i = Math.floor(Math.random() * arr.length)
+        const i = Math.floor(Math.random() * arr.length)
+        const item = arr[i]
 
-        items.push(...arr.splice(i, 1))
+        if (!usedItems.includes(item)) items.push(item)
+
+        arr.splice(i, 1)
     }
-    
+
     return items
 }
 
-function getWordsStarting(count, letter) {
+function getWordsStarting(count, letter, usedWords) {
     const group = wordGroupByFirstLetter[letter]
-    const words = getRandomItems(group, count)
-    
+    const words = getRandomItems(group, count, usedWords)
+
     return words
 }
 
-function getWordsRepeating(count, letter) {
+function getWordsRepeating(count, letter, usedWords) {
     const group = wordCountByRepeatingLetter[letter]
-    const words = getRandomItems(group, count)
-    
+    const words = getRandomItems(group, count, usedWords)
+
     return words
 }
 
@@ -180,10 +183,13 @@ function getWordGroups(count) {
     const groups = {}
 
     const orderedLetters = getKeysByAscendingCount(wordCountByLetter)
+    const usedWords = []
 
     for (const letter of orderedLetters) {
-        const wordsStarting = getWordsStarting(count, letter)
-        const wordsRepeating = getWordsRepeating(count, letter)
+        const wordsStarting = getWordsStarting(count, letter, usedWords)
+        const wordsRepeating = getWordsRepeating(count, letter, usedWords)
+
+        usedWords.push(...wordsStarting, ...wordsRepeating)
 
     }
 
