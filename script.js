@@ -119,7 +119,7 @@ function groupWordsByRepeatingLetter() {
 
     for (const { word } of words) {
         let letters = ''
-        
+
         for (const letter of word) {
             if (letters.includes(letter)) {
                 if (!groups[letter]) groups[letter] = []
@@ -136,7 +136,17 @@ function groupWordsByRepeatingLetter() {
 }
 
 function groupWordsByLetter() {
+    const groups = {}
 
+    for (const { word } of words) {
+        for (const letter of new Set(word)) {
+            if (!groups[letter]) groups[letter] = []
+
+            groups[letter].push(word)
+        }
+    }
+
+    return groups
 }
 
 function getWordGroups(count) {
