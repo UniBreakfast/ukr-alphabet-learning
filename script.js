@@ -2,9 +2,16 @@ const words = await getWords()
 const wordCountByFirstLetter = countWordsByFirstLetter()
 const wordCountByLetter = countWordsByLetter()
 const wordCountByRepeatingLetter = countWordsByRepeatingLetter()
+
+const wordGroupByFirstLetter = groupWordsByFirstLetter()
+const wordGroupByLetter = groupWordsByLetter()
+const wordGroupByRepeatingLetter = groupWordsByRepeatingLetter()
+
 const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
 getWordGroups(11)
+
+console.log(wordGroupByFirstLetter, wordGroupByLetter, wordGroupByRepeatingLetter)
 
 console.log({ words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter, keysBelowCount })
 
@@ -93,15 +100,37 @@ function getKeysByAscendingCount(obj) {
     return keys    
 }
 
+function groupWordsByFirstLetter() {
+    const groups = {}
+
+    for (const { word } of words) {
+        const letter = word[0]
+
+        if (!groups[letter]) groups[letter] = []
+
+        groups[letter].push(word)
+    }
+
+    return groups
+}
+
+function groupWordsByRepeatingLetter() {
+
+}
+
+function groupWordsByLetter() {
+
+}
+
 function getWordGroups(count) {
     const groups = {}
 
     const orderedLetters = getKeysByAscendingCount(wordCountByLetter)
 
-    console.log(orderedLetters)    
-
     for (const letter of orderedLetters) {
-        
+        // const wordsStarting = getWordsStarting(count, letter)
+        // const wordsRepeating = getWordsRepeating(count, letter)
+
     }
     
     return groups
