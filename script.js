@@ -9,7 +9,7 @@ const wordGroupByRepeatingLetter = groupWordsByRepeatingLetter()
 
 const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
-getWordGroups(11)
+// getWordGroups(11)
 
 console.log(wordGroupByFirstLetter, wordGroupByLetter, wordGroupByRepeatingLetter)
 
@@ -149,14 +149,34 @@ function groupWordsByLetter() {
     return groups
 }
 
+function getRandomItems(arg, count) {
+    const arr = [...arg]
+    const items = []
+
+    while (items.length < count && arr.length) {
+        i = Math.floor(Math.random() * arr.length)
+
+        items.push(...arr.splice(i, 1))
+    }
+    
+    return items
+}
+
+function getWordsStarting(count, letter) {
+    const group = wordGroupByFirstLetter[letter]
+    const words = getRandomItems(group, count)
+    
+    return words
+}
+
 function getWordGroups(count) {
     const groups = {}
 
     const orderedLetters = getKeysByAscendingCount(wordCountByLetter)
 
     for (const letter of orderedLetters) {
-        // const wordsStarting = getWordsStarting(count, letter)
-        // const wordsRepeating = getWordsRepeating(count, letter)
+        const wordsStarting = getWordsStarting(count, letter)
+        const wordsRepeating = getWordsRepeating(count, letter)
 
     }
 
