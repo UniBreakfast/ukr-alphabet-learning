@@ -2,6 +2,7 @@ const words = await getWords()
 const wordCountByFirstLetter = countWordsByFirstLetter()
 const wordCountByLetter = countWordsByLetter()
 const wordCountByRepeatingLetter = countWordsByRepeatingLetter()
+const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
 console.log({ words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter })
 
@@ -57,17 +58,27 @@ function countWordsByRepeatingLetter() {
     const count = {}
 
     for (const { word } of words) {
+        let letters = ''
         for (const letter of word) {
-            const regex = new RegExp(letter, 'g')
-            const mathes = word.match(regex)
-
-            if (mathes && mathes.length > 1) {
+            if (letters.includes(letter)) {
                 if (!count[letter]) count[letter] = 0
-                
+
                 count[letter]++
+            } else {
+                letters += letter
             }
         }
     }
 
     return count
+}
+
+function getKeysBelowCount(obj, count) {
+    const keys = []
+
+    for (const key in obj) {
+        if (obj[key] < count) keys.push(key)
+    }
+    
+    return keys
 }
