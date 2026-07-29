@@ -4,7 +4,7 @@ const wordCountByLetter = countWordsByLetter()
 const wordCountByRepeatingLetter = countWordsByRepeatingLetter()
 const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
-console.log({ words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter })
+console.log({ words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter, keysBelowCount })
 
 async function getWords() {
     const response = await fetch('words.txt')
