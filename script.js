@@ -169,6 +169,13 @@ function getWordsStarting(count, letter) {
     return words
 }
 
+function getWordsRepeating(count, letter) {
+    const group = wordCountByRepeatingLetter[letter]
+    const words = getRandomItems(group, count)
+    
+    return words
+}
+
 function getWordGroups(count) {
     const groups = {}
 
