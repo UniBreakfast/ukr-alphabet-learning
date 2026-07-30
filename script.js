@@ -11,6 +11,8 @@ const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
 const wordGroups = getWordGroups(10)
 
+showWordGroups()
+
 console.log(wordGroupByFirstLetter, wordGroupByLetter, wordGroupByRepeatingLetter)
 
 console.log({ words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter, keysBelowCount, wordGroups })
@@ -149,7 +151,7 @@ function groupWordsByLetter() {
     return groups
 }
 
-function getRandomItems(arg, count, usedItems=[]) {
+function getRandomItems(arg, count, usedItems = []) {
     const arr = [...arg]
     const items = []
 
@@ -182,7 +184,7 @@ function getWordsRepeating(count, letter, usedWords) {
 function getWordsContaining(count, letter, usedWords) {
     const group = wordGroupByLetter[letter] || []
     const words = getRandomItems(group, count, usedWords)
-    
+
     return words
 }
 
@@ -214,4 +216,55 @@ function getWordGroups(count) {
     }
 
     return groups
+}
+
+function buildCard(word, letter) {
+    const card = document.createElement('li')
+    let html = ''
+
+    for (const char of word) {
+        if (char == letter) {
+            html += `<span class="color">${letter}</span>`
+
+        } else {
+            html += char
+        }
+    }
+
+    card.innerHTML = `
+        <figure>
+            <img src="img/${word}.png" alt="">
+            <figcaption>${html}</figcaption>
+        </figure>
+    `
+
+    return card
+}
+
+function buildSection(letter, words) {
+    const section = document.createElement('section')
+    const h2 = document.createElement('h2')
+    const ul = document.createElement('ul')
+
+    const cards = words.map(word => buildCard(word, letter))
+
+    h2.append(letter)
+    ul.append(...cards)
+    section.append(h2, ul)
+
+    return section
+}
+
+function showWordGroups() {
+    const main = document.querySelector('main')
+    const sections = []
+
+    for (const letter in wordGroups) {
+        const group = wordGroups[letter]
+        const section = buildSection(letter, group)
+
+        sections.push(section)
+    }
+
+    main.replaceChildren(...sections)
 }
