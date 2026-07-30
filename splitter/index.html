@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PNG Cluster Splitter</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, Arial, sans-serif;
+      color: #1f2937;
+      background: #f3f4f6;
+    }
+
+    .app {
+      width: min(1200px, calc(100% - 32px));
+      margin: 32px auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+    }
+
+    .description {
+      margin: 0 0 24px;
+      color: #6b7280;
+    }
+
+    .panel {
+      padding: 20px;
+      border: 1px solid #d1d5db;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 8px 30px rgb(0 0 0 / 6%);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 20px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input[type="file"],
+    input[type="number"] {
+      min-height: 42px;
+      padding: 9px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: white;
+    }
+
+    input[type="number"] {
+      width: 120px;
+    }
+
+    button {
+      min-height: 42px;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .primary {
+      color: white;
+      background: #2563eb;
+    }
+
+    .secondary {
+      color: #1f2937;
+      background: #e5e7eb;
+    }
+
+    .status {
+      margin-bottom: 16px;
+      color: #4b5563;
+    }
+
+    .canvas-wrap {
+      max-height: 600px;
+      overflow: auto;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      background:
+        linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+        linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+      background-size: 20px 20px;
+    }
+
+    #sourceCanvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .results-title {
+      margin: 28px 0 14px;
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .cluster-card {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      background: white;
+    }
+
+    .preview {
+      display: grid;
+      place-items: center;
+      min-height: 150px;
+      padding: 10px;
+      overflow: hidden;
+      border-radius: 10px;
+      background:
+        linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+        linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+      background-size: 20px 20px;
+    }
+
+    .preview canvas {
+      max-width: 100%;
+      max-height: 220px;
+    }
+
+    .cluster-info {
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .download-button {
+      width: 100%;
+      color: white;
+      background: #111827;
+    }
+
+    .empty {
+      color: #6b7280;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <h1>PNG Cluster Splitter</h1>
+    <p class="description">
+      Загружает PNG с прозрачностью, находит отдельные непрозрачные рисунки
+      и позволяет скачать каждый из них отдельным обрезанным PNG.
+    </p>
+
+    <section class="panel">
+      <div class="controls">
+        <div class="field">
+          <label for="fileInput">PNG-файл</label>
+          <input id="fileInput" type="file" accept="image/png" />
+        </div>
+
+        <div class="field">
+          <label for="alphaThreshold">Порог прозрачности</label>
+          <input
+            id="alphaThreshold"
+            type="number"
+            min="1"
+            max="255"
+            value="10"
+          />
+        </div>
+
+        <div class="field">
+          <label for="minPixels">Минимум пикселей</label>
+          <input
+            id="minPixels"
+            type="number"
+            min="1"
+            value="20"
+          />
+        </div>
+
+        <div class="field">
+          <label for="padding">Отступ вокруг рисунка</label>
+          <input
+            id="padding"
+            type="number"
+            min="0"
+            value="4"
+          />
+        </div>
+
+        <button id="detectButton" class="primary" disabled>
+          Найти кластеры
+        </button>
+
+        <button id="downloadAllButton" class="secondary" disabled>
+          Скачать все
+        </button>
+      </div>
+
+      <div id="status" class="status">Загрузите PNG-файл.</div>
+
+      <div class="canvas-wrap">
+        <canvas id="sourceCanvas"></canvas>
+      </div>
+    </section>
+
+    <h2 class="results-title">Найденные рисунки</h2>
+    <section id="results" class="results">
+      <div class="empty">Результатов пока нет.</div>
+    </section>
+  </main>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const alphaThresholdInput = document.getElementById("alphaThreshold");
+    const minPixelsInput = document.getElementById("minPixels");
+    const paddingInput = document.getElementById("padding");
+
+    const detectButton = document.getElementById("detectButton");
+    const downloadAllButton = document.getElementById("downloadAllButton");
+
+    const sourceCanvas = document.getElementById("sourceCanvas");
+    const sourceContext = sourceCanvas.getContext("2d", {
+      willReadFrequently: true,
+    });
+
+    const status = document.getElementById("status");
+    const results = document.getElementById("results");
+
+    let sourceFileName = "cluster";
+    let sourceImageData = null;
+    let detectedClusters = [];
+
+    fileInput.addEventListener("change", loadImage);
+    detectButton.addEventListener("click", detectClusters);
+    downloadAllButton.addEventListener("click", downloadAllClusters);
+
+    function loadImage(event) {
+      const file = event.target.files[0];
+
+      if (!file) {
+        resetApp();
+        return;
+      }
+
+      if (file.type !== "image/png") {
+        alert("Нужно выбрать PNG-файл.");
+        resetApp();
+        return;
+      }
+
+      sourceFileName = removeExtension(file.name);
+
+      const image = new Image();
+      const objectUrl = URL.createObjectURL(file);
+
+      image.onload = () => {
+        sourceCanvas.width = image.naturalWidth;
+        sourceCanvas.height = image.naturalHeight;
+
+        sourceContext.drawImage(image, 0, 0);
+
+        sourceImageData = sourceContext.getImageData(
+          0,
+          0,
+          sourceCanvas.width,
+          sourceCanvas.height
+        );
+
+        detectedClusters = [];
+        results.innerHTML = '<div class="empty">Нажмите «Найти кластеры».</div>';
+
+        detectButton.disabled = false;
+        downloadAllButton.disabled = true;
+
+        status.textContent =
+          `Загружено: ${file.name}, ` +
+          `${image.naturalWidth} × ${image.naturalHeight}px`;
+
+        URL.revokeObjectURL(objectUrl);
+      };
+
+      image.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        alert("Не удалось прочитать изображение.");
+        resetApp();
+      };
+
+      image.src = objectUrl;
+    }
+
+    function detectClusters() {
+      if (!sourceImageData) {
+        return;
+      }
+
+      const width = sourceImageData.width;
+      const height = sourceImageData.height;
+      const pixels = sourceImageData.data;
+
+      const alphaThreshold = clamp(
+        Number(alphaThresholdInput.value) || 1,
+        1,
+        255
+      );
+
+      const minPixels = Math.max(
+        1,
+        Number(minPixelsInput.value) || 1
+      );
+
+      const padding = Math.max(
+        0,
+        Number(paddingInput.value) || 0
+      );
+
+      const visited = new Uint8Array(width * height);
+      const clusters = [];
+
+      /*
+        Используется поиск связанных компонентов.
+
+        Пиксель считается частью рисунка, если его alpha >= alphaThreshold.
+
+        Используется связность по 8 направлениям:
+        горизонтально, вертикально и по диагонали.
+      */
+      const directions = [
+        [-1, -1], [0, -1], [1, -1],
+        [-1,  0],          [1,  0],
+        [-1,  1], [0,  1], [1,  1],
+      ];
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const startIndex = y * width + x;
+
+          if (visited[startIndex]) {
+            continue;
+          }
+
+          visited[startIndex] = 1;
+
+          if (!isOpaquePixel(pixels, startIndex, alphaThreshold)) {
+            continue;
+          }
+
+          const queueX = [x];
+          const queueY = [y];
+
+          let queueIndex = 0;
+          let pixelCount = 0;
+
+          let minX = x;
+          let minY = y;
+          let maxX = x;
+          let maxY = y;
+
+          while (queueIndex < queueX.length) {
+            const currentX = queueX[queueIndex];
+            const currentY = queueY[queueIndex];
+            queueIndex++;
+
+            pixelCount++;
+
+            minX = Math.min(minX, currentX);
+            minY = Math.min(minY, currentY);
+            maxX = Math.max(maxX, currentX);
+            maxY = Math.max(maxY, currentY);
+
+            for (const [offsetX, offsetY] of directions) {
+              const nextX = currentX + offsetX;
+              const nextY = currentY + offsetY;
+
+              if (
+                nextX < 0 ||
+                nextY < 0 ||
+                nextX >= width ||
+                nextY >= height
+              ) {
+                continue;
+              }
+
+              const nextIndex = nextY * width + nextX;
+
+              if (visited[nextIndex]) {
+                continue;
+              }
+
+              visited[nextIndex] = 1;
+
+              if (
+                isOpaquePixel(
+                  pixels,
+                  nextIndex,
+                  alphaThreshold
+                )
+              ) {
+                queueX.push(nextX);
+                queueY.push(nextY);
+              }
+            }
+          }
+
+          if (pixelCount < minPixels) {
+            continue;
+          }
+
+          const paddedMinX = Math.max(0, minX - padding);
+          const paddedMinY = Math.max(0, minY - padding);
+          const paddedMaxX = Math.min(width - 1, maxX + padding);
+          const paddedMaxY = Math.min(height - 1, maxY + padding);
+
+          clusters.push({
+            x: paddedMinX,
+            y: paddedMinY,
+            width: paddedMaxX - paddedMinX + 1,
+            height: paddedMaxY - paddedMinY + 1,
+            pixelCount,
+          });
+        }
+      }
+
+      clusters.sort((a, b) => {
+        if (a.y !== b.y) {
+          return a.y - b.y;
+        }
+
+        return a.x - b.x;
+      });
+
+      detectedClusters = clusters.map((cluster, index) => {
+        const canvas = cropCluster(cluster);
+
+        return {
+          ...cluster,
+          number: index + 1,
+          canvas,
+        };
+      });
+
+      renderClusters();
+
+      status.textContent = detectedClusters.length
+        ? `Найдено кластеров: ${detectedClusters.length}`
+        : "Кластеры не найдены. Попробуйте уменьшить порог прозрачности или минимальное количество пикселей.";
+
+      downloadAllButton.disabled = detectedClusters.length === 0;
+    }
+
+    function isOpaquePixel(pixels, pixelIndex, alphaThreshold) {
+      const alphaIndex = pixelIndex * 4 + 3;
+      return pixels[alphaIndex] >= alphaThreshold;
+    }
+
+    function cropCluster(cluster) {
+      const canvas = document.createElement("canvas");
+      canvas.width = cluster.width;
+      canvas.height = cluster.height;
+
+      const context = canvas.getContext("2d");
+
+      context.drawImage(
+        sourceCanvas,
+        cluster.x,
+        cluster.y,
+        cluster.width,
+        cluster.height,
+        0,
+        0,
+        cluster.width,
+        cluster.height
+      );
+
+      return canvas;
+    }
+
+    function renderClusters() {
+      results.innerHTML = "";
+
+      if (detectedClusters.length === 0) {
+        results.innerHTML = '<div class="empty">Результатов нет.</div>';
+        return;
+      }
+
+      for (const cluster of detectedClusters) {
+        const card = document.createElement("article");
+        card.className = "cluster-card";
+
+        const preview = document.createElement("div");
+        preview.className = "preview";
+        preview.append(cluster.canvas);
+
+        const info = document.createElement("div");
+        info.className = "cluster-info";
+        info.textContent =
+          `№${cluster.number}: ` +
+          `${cluster.width} × ${cluster.height}px, ` +
+          `${cluster.pixelCount} непрозрачных пикселей`;
+
+        const button = document.createElement("button");
+        button.className = "download-button";
+        button.textContent = "Скачать PNG";
+
+        button.addEventListener("click", () => {
+          downloadCanvas(
+            cluster.canvas,
+            makeClusterFileName(cluster.number)
+          );
+        });
+
+        card.append(preview, info, button);
+        results.append(card);
+      }
+    }
+
+    async function downloadAllClusters() {
+      /*
+        Браузеры могут блокировать массовое скачивание.
+        Поэтому файлы запускаются последовательно с небольшой задержкой.
+      */
+      for (const cluster of detectedClusters) {
+        downloadCanvas(
+          cluster.canvas,
+          makeClusterFileName(cluster.number)
+        );
+
+        await wait(150);
+      }
+    }
+
+    function downloadCanvas(canvas, fileName) {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = fileName;
+        link.click();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }, "image/png");
+    }
+
+    function makeClusterFileName(number) {
+      return `${sourceFileName}-${String(number).padStart(2, "0")}.png`;
+    }
+
+    function removeExtension(fileName) {
+      return fileName.replace(/\.[^.]+$/, "");
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function wait(milliseconds) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, milliseconds);
+      });
+    }
+
+    function resetApp() {
+      sourceFileName = "cluster";
+      sourceImageData = null;
+      detectedClusters = [];
+
+      sourceCanvas.width = 0;
+      sourceCanvas.height = 0;
+
+      detectButton.disabled = true;
+      downloadAllButton.disabled = true;
+
+      status.textContent = "Загрузите PNG-файл.";
+      results.innerHTML = '<div class="empty">Результатов пока нет.</div>';
+    }
+  </script>
+</body>
+</html>
