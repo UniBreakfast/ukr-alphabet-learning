@@ -1,0 +1,32 @@
+main {
+    font-family: "Shantell Sans", cursive;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 4rem;
+    text-align: center;
+    color: crimson;
+}
+
+ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+figure {
+    height: 100%;
+    text-align: center;
+    align-content: end;
+}
+
+figcaption {
+    text-transform: uppercase;
+
+}
+
+span {
+    color: red;
+}
