@@ -11,7 +11,8 @@ const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
 const wordGroups = getWordGroups(10)
 
-showWordGroups()
+showAlphabet()
+// showWordGroups()
 
 console.log(wordGroupByFirstLetter, wordGroupByLetter, wordGroupByRepeatingLetter)
 
@@ -193,7 +194,7 @@ function getWordsContaining(count, letter, usedWords) {
 }
 
 function getWordGroups(count) {
-    const groups = {}
+    const groups = []
 
     const orderedLetters = getKeysByAscendingCount(wordCountByLetter)
     const usedWords = []
@@ -216,10 +217,14 @@ function getWordGroups(count) {
             words.push(...wordsContaining)
         }
 
-        groups[letter] = words
+        groups.push([letter, words])
     }
 
-    return groups
+    groups.sort((a, b) => a[0].localeCompare(b[0], "uk"))
+    groups.push(groups.shift())
+
+
+    return Object.fromEntries(groups)
 }
 
 function buildCard(word, letter) {
@@ -270,8 +275,33 @@ function showWordGroups() {
         sections.push(section)
     }
 
-    sections.sort((a, b) => a.innerText[0].localeCompare(b.innerText[0], "uk"))
-    sections.push(sections.shift())
 
     main.replaceChildren(...sections)
+}
+
+function buildAlphabet() {
+    const items = []
+    
+    for (const key in wordGroups) {
+        const li = document.createElement('li')
+        const button = document.createElement('button')
+        
+        button.append(key)
+        li.append(button)
+              
+        items.push(li)        
+    }
+    
+    return items
+}
+
+function showAlphabet() {
+    const main = document.querySelector('main')
+    const ul = document.createElement('ul')
+    const items = buildAlphabet()
+
+    ul.classList.add('alphabet')
+    ul.append(...items)
+    
+    main.replaceChildren(ul)
 }
