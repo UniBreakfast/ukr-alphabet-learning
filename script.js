@@ -37,11 +37,15 @@ async function getWords() {
     return words
 }
 
+function normalize(str) {
+    return str.replaceAll('á', 'а')
+}
+
 function countWordsByFirstLetter() {
     const count = {}
 
     for (const { word } of words) {
-        const letter = word[0]
+        const letter = normalize(word[0])
 
         if (!count[letter]) count[letter] = 0
 
@@ -55,7 +59,7 @@ function countWordsByLetter() {
     const count = {}
 
     for (const { word } of words) {
-        for (const letter of new Set(word)) {
+        for (const letter of new Set(normalize(word))) {
             if (!count[letter]) count[letter] = 0
 
             count[letter]++
@@ -70,7 +74,7 @@ function countWordsByRepeatingLetter() {
 
     for (const { word } of words) {
         let letters = ''
-        for (const letter of word) {
+        for (const letter of normalize(word)) {
             if (letters.includes(letter)) {
                 if (!count[letter]) count[letter] = 0
 
@@ -106,7 +110,7 @@ function groupWordsByFirstLetter() {
     const groups = {}
 
     for (const { word } of words) {
-        const letter = word[0]
+        const letter = normalize(word[0])
 
         if (!groups[letter]) groups[letter] = []
 
@@ -122,7 +126,7 @@ function groupWordsByRepeatingLetter() {
     for (const { word } of words) {
         let letters = ''
 
-        for (const letter of word) {
+        for (const letter of normalize(word)) {
             if (letters.includes(letter)) {
                 if (!groups[letter]) groups[letter] = []
 
@@ -141,7 +145,7 @@ function groupWordsByLetter() {
     const groups = {}
 
     for (const { word } of words) {
-        for (const letter of new Set(word)) {
+        for (const letter of new Set(normalize(word))) {
             if (!groups[letter]) groups[letter] = []
 
             groups[letter].push(word)
