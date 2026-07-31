@@ -266,5 +266,8 @@ function showWordGroups() {
         sections.push(section)
     }
 
+    sections.sort((a, b) => a.innerText[0].localeCompare(b.innerText[0], "uk"))
+    sections.push(sections.shift())
+
     main.replaceChildren(...sections)
 }
