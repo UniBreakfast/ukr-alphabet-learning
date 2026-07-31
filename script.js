@@ -9,7 +9,7 @@ const wordGroupByRepeatingLetter = groupWordsByRepeatingLetter()
 
 const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
-const wordGroups = getWordGroups(10)
+let wordGroups = getWordGroups(10)
 
 const main = document.querySelector('main')
 
@@ -256,6 +256,8 @@ function buildSection(letter, words) {
     const h2 = document.createElement('h2')
     const ul = document.createElement('ul')
 
+    ul.classList.add('cards')
+
     const cards = words.map(word => buildCard(word, letter))
 
     h2.append(letter)
@@ -283,12 +285,21 @@ function showWordGroup(letter) {
     const group = wordGroups[letter]
     const section = buildSection(letter, group)
     const backBtn = document.createElement('button')
+    const regenerateBtn = document.createElement('button')
 
     backBtn.append('←')
     backBtn.classList.add('back')
     backBtn.onclick = showAlphabet
 
+    regenerateBtn.append('↻')
+    regenerateBtn.classList.add('regenerate')
+    regenerateBtn.onclick = () => {
+        wordGroups = getWordGroups(10)
+        showWordGroup(letter)
+    }
+
     section.prepend(backBtn)
+    section.append(regenerateBtn)
 
     main.replaceChildren(section)
 }
