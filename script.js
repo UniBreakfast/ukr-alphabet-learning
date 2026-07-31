@@ -11,8 +11,9 @@ const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
 const wordGroups = getWordGroups(10)
 
+const main = document.querySelector('main')
+
 showAlphabet()
-// showWordGroups()
 
 console.log(wordGroupByFirstLetter, wordGroupByLetter, wordGroupByRepeatingLetter)
 
@@ -265,7 +266,6 @@ function buildSection(letter, words) {
 }
 
 function showWordGroups() {
-    const main = document.querySelector('main')
     const sections = []
 
     for (const letter in wordGroups) {
@@ -279,29 +279,47 @@ function showWordGroups() {
     main.replaceChildren(...sections)
 }
 
+function showWordGroup(letter) {
+    const group = wordGroups[letter]
+    const section = buildSection(letter, group)
+
+    main.replaceChildren(section)
+}
+
 function buildAlphabet() {
     const items = []
-    
+
     for (const key in wordGroups) {
         const li = document.createElement('li')
         const button = document.createElement('button')
-        
+
         button.append(key)
         li.append(button)
-              
-        items.push(li)        
+
+        items.push(li)
     }
-    
+
     return items
 }
 
+function handleAplhabetCLick(e) {
+    const btn = e.target
+
+    if (!btn.matches('button')) return
+
+    const letter = btn.innerText.toLowerCase()
+
+    showWordGroup(letter)
+}
+
 function showAlphabet() {
-    const main = document.querySelector('main')
     const ul = document.createElement('ul')
     const items = buildAlphabet()
 
     ul.classList.add('alphabet')
     ul.append(...items)
-    
+
+    ul.onclick = handleAplhabetCLick
+
     main.replaceChildren(ul)
 }
