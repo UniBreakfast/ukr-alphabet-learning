@@ -282,6 +282,13 @@ function showWordGroups() {
 function showWordGroup(letter) {
     const group = wordGroups[letter]
     const section = buildSection(letter, group)
+    const backBtn = document.createElement('button')
+
+    backBtn.append('←')
+    backBtn.classList.add('back')
+    backBtn.onclick = showAlphabet
+
+    section.prepend(backBtn)
 
     main.replaceChildren(section)
 }
@@ -307,7 +314,7 @@ function handleAplhabetCLick(e) {
 
     if (!btn.matches('button')) return
 
-    const letter = btn.innerText.toLowerCase()
+    const letter = btn.textContent
 
     showWordGroup(letter)
 }
