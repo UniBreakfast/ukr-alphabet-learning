@@ -40,6 +40,10 @@ figcaption {
     text-transform: uppercase;
     letter-spacing: 4px;
     font-size: 3rem;
+
+    @media (max-width: 600px) {
+        font-size: 2rem;
+    }
 }
 
 span {
