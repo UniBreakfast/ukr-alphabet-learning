@@ -15,9 +15,7 @@ const main = document.querySelector('main')
 
 showAlphabet()
 
-console.log(wordGroupByFirstLetter, wordGroupByLetter, wordGroupByRepeatingLetter)
-
-console.log({ words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter, keysBelowCount, wordGroups })
+console.log({ words, wordCountByFirstLetter, wordCountByLetter, wordCountByRepeatingLetter, keysBelowCount, wordGroups, wordGroupByFirstLetter, wordGroupByLetter, wordGroupByRepeatingLetter })
 
 async function getWords() {
     const response = await fetch('words.txt')
@@ -294,7 +292,7 @@ function showWordGroup(letter) {
     regenerateBtn.append('↻')
     regenerateBtn.classList.add('regenerate')
     regenerateBtn.onclick = () => {
-        wordGroups = getWordGroups(10)
+        wordGroups = getWordGroups(18)
         showWordGroup(letter)
     }
 
