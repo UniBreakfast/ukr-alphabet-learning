@@ -9,7 +9,7 @@ const wordGroupByRepeatingLetter = groupWordsByRepeatingLetter()
 
 const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
 
-let wordGroups = getWordGroups(10)
+let wordGroups = getWordGroups(18)
 
 const main = document.querySelector('main')
 
