@@ -7,7 +7,7 @@ const wordGroupByFirstLetter = groupWordsByFirstLetter()
 const wordGroupByLetter = groupWordsByLetter()
 const wordGroupByRepeatingLetter = groupWordsByRepeatingLetter()
 
-const keysBelowCount = getKeysBelowCount(wordCountByLetter, 20)
+const keysBelowCount = getKeysBelowCount(wordCountByLetter, 40)
 
 let wordGroups = getWordGroups(18)
 
