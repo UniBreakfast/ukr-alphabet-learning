@@ -5,7 +5,7 @@ export {
     getWordGroups,
 }
 
-import { normalize } from "./utils.js";
+import { normalize, getRandomItems } from "./utils.js";
 import { getKeysByAscendingCount } from "./stats.js";
 
 function groupWordsByFirstLetter(words) {
@@ -57,7 +57,13 @@ function groupWordsByLetter(words) {
     return groups
 }
 
-function getWordGroups(count) {
+function getWordGroups(
+    count,
+    wordCountByLetter,
+    wordGroupByFirstLetter,
+    wordGroupByRepeatingLetter,
+    wordGroupByLetter,
+) {
     const groups = []
 
     const orderedLetters = getKeysByAscendingCount(wordCountByLetter)
@@ -66,13 +72,13 @@ function getWordGroups(count) {
     for (const letter of orderedLetters) {
         const words = []
 
-        const wordsStarting = getWordsStarting(count / 2, letter, usedWords)
-        const wordsRepeating = getWordsRepeating(count / 2, letter, usedWords)
+        const wordsStarting = getWordsStarting(count / 2, letter, usedWords, wordGroupByFirstLetter)
+        const wordsRepeating = getWordsRepeating(count / 2, letter, usedWords, wordGroupByRepeatingLetter)
 
         words.push(...wordsStarting, ...wordsRepeating)
 
         if (words.length < count) {
-            const wordsContaining = getWordsContaining(count - words.length, letter, usedWords)
+            const wordsContaining = getWordsContaining(count - words.length, letter, usedWords, wordGroupByLetter)
 
             words.push(...wordsContaining)
         }
@@ -85,4 +91,25 @@ function getWordGroups(count) {
 
 
     return Object.fromEntries(groups)
+}
+
+function getWordsStarting(count, letter, usedWords, wordGroups) {
+    const group = wordGroups[letter] || []
+    const words = getRandomItems(group, count, usedWords)
+
+    return words
+}
+
+function getWordsRepeating(count, letter, usedWords, wordGroups) {
+    const group = wordGroups[letter] || []
+    const words = getRandomItems(group, count, usedWords)
+
+    return words
+}
+
+function getWordsContaining(count, letter, usedWords, wordGroups) {
+    const group = wordGroups[letter] || []
+    const words = getRandomItems(group, count, usedWords)
+
+    return words
 }

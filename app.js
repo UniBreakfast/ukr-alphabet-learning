@@ -14,6 +14,8 @@ import {
     getWordGroups,
 } from './js/grouping.js'
 
+import { showAlphabet } from './js/render.js'
+
 const words = await getWords()
 
 const wordCountByFirstLetter = countWordsByFirstLetter(words)
@@ -25,9 +27,21 @@ const wordGroupByRepeatingLetter = groupWordsByRepeatingLetter(words)
 
 const keysBelowCount = getKeysBelowCount(wordCountByLetter, 40)
 
-let wordGroups = getWordGroups(18)
+let wordGroups = getWordGroups(
+    18,
+    wordCountByLetter,
+    wordGroupByFirstLetter,
+    wordGroupByRepeatingLetter,
+    wordGroupByLetter,
+)
 
-showAlphabet()
+showAlphabet(
+    wordGroups,
+    wordCountByLetter,
+    wordGroupByFirstLetter,
+    wordGroupByRepeatingLetter,
+    wordGroupByLetter,
+)
 
 console.log({
     words,
