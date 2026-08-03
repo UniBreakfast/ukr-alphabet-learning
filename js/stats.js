@@ -1,7 +1,8 @@
 export {
     countWordsByFirstLetter,
     countWordsByLetter,
-    countWordsByRepeatingLetter,
+    countWordsByRepeatingLetter, 
+    getKeysBelowCount,
 }
 
 function countWordsByFirstLetter() {
@@ -49,4 +50,14 @@ function countWordsByRepeatingLetter() {
     }
 
     return count
+}
+
+function getKeysBelowCount(obj, count) {
+    const keys = []
+
+    for (const key in obj) {
+        if (obj[key] < count) keys.push(key)
+    }
+
+    return keys
 }

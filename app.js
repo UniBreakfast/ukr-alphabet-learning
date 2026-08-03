@@ -1,9 +1,19 @@
 import { getWords } from './js/data.js'
+
 import {
     wordCountByFirstLetter,
     wordCountByLetter,
     wordCountByRepeatingLetter,
+    getKeysBelowCount,
 } from './js/stats.js'
+
+import {
+    groupWordsByFirstLetter,
+    groupWordsByLetter,
+    groupWordsByRepeatingLetter,
+    getWordGroups,
+} from './js/grouping.js'
+
 
 const words = await getWords()
 
