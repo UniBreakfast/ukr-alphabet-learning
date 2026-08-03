@@ -117,6 +117,7 @@ function showWordGroup(
         showWordGroup(
             letter,
             wordGroups,
+            wordCountByLetter,
             wordGroupByFirstLetter,
             wordGroupByRepeatingLetter,
             wordGroupByLetter,
