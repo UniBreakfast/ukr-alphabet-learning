@@ -205,17 +205,13 @@ function getWordGroups(count) {
         const words = []
 
         const wordsStarting = getWordsStarting(count / 2, letter, usedWords)
-        usedWords.push(...wordsStarting)
-
         const wordsRepeating = getWordsRepeating(count / 2, letter, usedWords)
-        usedWords.push(...wordsRepeating)
 
         words.push(...wordsStarting, ...wordsRepeating)
 
         if (words.length < count) {
             const wordsContaining = getWordsContaining(count - words.length, letter, usedWords)
 
-            usedWords.push(...wordsContaining)
             words.push(...wordsContaining)
         }
 
