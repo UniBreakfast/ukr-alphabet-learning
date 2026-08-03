@@ -1,9 +1,9 @@
 import { getWords } from './js/data.js'
 
 import {
-    wordCountByFirstLetter,
-    wordCountByLetter,
-    wordCountByRepeatingLetter,
+    countWordsByFirstLetter,
+    countWordsByLetter,
+    countWordsByRepeatingLetter,
     getKeysBelowCount,
 } from './js/stats.js'
 
@@ -14,15 +14,14 @@ import {
     getWordGroups,
 } from './js/grouping.js'
 
-
 const words = await getWords()
 
-const wordCountByFirstLetter = countWordsByFirstLetter()
-const wordCountByLetter = countWordsByLetter()
-const wordCountByRepeatingLetter = countWordsByRepeatingLetter()
-const wordGroupByFirstLetter = groupWordsByFirstLetter()
-const wordGroupByLetter = groupWordsByLetter()
-const wordGroupByRepeatingLetter = groupWordsByRepeatingLetter()
+const wordCountByFirstLetter = countWordsByFirstLetter(words)
+const wordCountByLetter = countWordsByLetter(words)
+const wordCountByRepeatingLetter = countWordsByRepeatingLetter(words)
+const wordGroupByFirstLetter = groupWordsByFirstLetter(words)
+const wordGroupByLetter = groupWordsByLetter(words)
+const wordGroupByRepeatingLetter = groupWordsByRepeatingLetter(words)
 
 const keysBelowCount = getKeysBelowCount(wordCountByLetter, 40)
 

@@ -5,7 +5,10 @@ export {
     getWordGroups,
 }
 
-function groupWordsByFirstLetter() {
+import { normalize } from "./utils.js";
+import { getKeysByAscendingCount } from "./stats.js";
+
+function groupWordsByFirstLetter(words) {
     const groups = {}
 
     for (const { word } of words) {
@@ -19,7 +22,7 @@ function groupWordsByFirstLetter() {
     return groups
 }
 
-function groupWordsByRepeatingLetter() {
+function groupWordsByRepeatingLetter(words) {
     const groups = {}
 
     for (const { word } of words) {
@@ -40,7 +43,7 @@ function groupWordsByRepeatingLetter() {
     return groups
 }
 
-function groupWordsByLetter() {
+function groupWordsByLetter(words) {
     const groups = {}
 
     for (const { word } of words) {

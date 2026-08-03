@@ -3,9 +3,12 @@ export {
     countWordsByLetter,
     countWordsByRepeatingLetter, 
     getKeysBelowCount,
+    getKeysByAscendingCount,
 }
 
-function countWordsByFirstLetter() {
+import { normalize } from "./utils.js";
+
+function countWordsByFirstLetter(words) {
     const count = {}
 
     for (const { word } of words) {
@@ -19,7 +22,7 @@ function countWordsByFirstLetter() {
     return count
 }
 
-function countWordsByLetter() {
+function countWordsByLetter(words) {
     const count = {}
 
     for (const { word } of words) {
@@ -33,7 +36,7 @@ function countWordsByLetter() {
     return count
 }
 
-function countWordsByRepeatingLetter() {
+function countWordsByRepeatingLetter(words) {
     const count = {}
 
     for (const { word } of words) {
@@ -58,6 +61,14 @@ function getKeysBelowCount(obj, count) {
     for (const key in obj) {
         if (obj[key] < count) keys.push(key)
     }
+
+    return keys
+}
+
+function getKeysByAscendingCount(obj) {
+    const keys = Object.keys(obj)
+
+    keys.sort((a, b) => obj[a] - obj[b])
 
     return keys
 }
